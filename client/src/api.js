@@ -39,8 +39,7 @@ export async function askQuestion({ question, documentId, onSources, onToken, on
     });
 
     if (!response.ok) {
-      const err = await response.json();
-      onError(err.error || 'Request failed');
+      onError(`Request failed (${response.status})`);
       return;
     }
 

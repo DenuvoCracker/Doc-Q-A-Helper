@@ -1,12 +1,8 @@
 const db = require('../db');
 const { ollama } = require('./openaiClient');
 
-const MAX_CHUNKS = 200; // safety cap during development
+const MAX_CHUNKS = 200;
 
-/**
- * Embeds all chunks and stores them in Postgres with the document_id.
- * Processes in small batches to avoid rate limits.
- */
 async function embedAndStore(chunks, documentId) {
   const limited = chunks.slice(0, MAX_CHUNKS);
 
@@ -54,7 +50,6 @@ async function embedAndStore(chunks, documentId) {
   //   }
   // }
 
-  // Update document chunk count
   await db.query(
     `UPDATE documents SET chunk_count = $1 WHERE id = $2`,
     [limited.length, documentId]

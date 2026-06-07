@@ -1,12 +1,7 @@
 const db = require('../db');
 const { ollama } = require('./openaiClient');
 
-/**
- * Embeds the user's question, then finds the k most similar chunks
- * using cosine distance in pgvector (<=> operator).
- */
 async function findRelevantChunks(question, documentId, k = 5) {
-  // const openai = getOpenAI();
 
   const response = await ollama.embeddings({
     model: 'nomic-embed-text',
@@ -25,7 +20,7 @@ async function findRelevantChunks(question, documentId, k = 5) {
     [JSON.stringify(questionEmbedding), documentId, k]
   );
 
-  return result.rows; // [{ content, chunk_index, similarity }]
+  return result.rows;
 }
 
 module.exports = { findRelevantChunks };

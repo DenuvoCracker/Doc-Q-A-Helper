@@ -14,7 +14,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [uploadStatus, setUploadStatus] = useState(''); // '' | 'processing' | 'done' | 'error'
+  const [uploadStatus, setUploadStatus] = useState('');
   const [error, setError] = useState('');
   const [dragging, setDragging] = useState(false);
   const fileInputRef = useRef(null);
@@ -84,7 +84,6 @@ export default function Home() {
       </header>
 
       <main className={styles.main}>
-        {/* Upload zone */}
         <div
           className={`${styles.uploadZone} ${dragging ? styles.dragging : ''} ${uploading ? styles.uploadingState : ''}`}
           onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
@@ -143,7 +142,6 @@ export default function Home() {
           </div>
         )}
 
-        {/* Document library */}
         <section className={styles.library}>
           <h2 className={styles.libraryHeading}>
             {loading ? 'Loading…' : documents.length === 0 ? 'No documents yet' : `${documents.length} document${documents.length === 1 ? '' : 's'}`}

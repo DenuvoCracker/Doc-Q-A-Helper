@@ -87,7 +87,6 @@ export default function Chat() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Auto-resize textarea
   useEffect(() => {
     const ta = textareaRef.current;
     if (ta) {
@@ -156,7 +155,6 @@ export default function Chat() {
 
   return (
     <div className={styles.page}>
-      {/* Sidebar */}
       <aside className={styles.sidebar}>
         <button className={styles.backBtn} onClick={() => navigate('/')}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -188,7 +186,6 @@ export default function Chat() {
         </p>
       </aside>
 
-      {/* Chat area */}
       <div className={styles.chatArea}>
         <div className={styles.messages}>
           {isEmpty ? (
@@ -220,7 +217,6 @@ export default function Chat() {
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Input bar */}
         <div className={styles.inputArea}>
           <div className={styles.inputWrap}>
             <textarea

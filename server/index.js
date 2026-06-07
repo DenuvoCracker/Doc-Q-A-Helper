@@ -18,16 +18,13 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// Routes
 app.use('/api/documents', documentsRouter);
 app.use('/api/ask', askRouter);
 
-// Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// Global error handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ error: err.message || 'Internal server error' });

@@ -4,7 +4,6 @@
   overflow: hidden;
 }
 
-/* Sidebar */
 .sidebar {
   width: 240px;
   flex-shrink: 0;
@@ -50,7 +49,6 @@
 
 .sidebarHint { font-size: 12px; color: var(--text-3); line-height: 1.6; }
 
-/* Chat area */
 .chatArea {
   flex: 1;
   display: flex;
@@ -67,7 +65,6 @@
   gap: 24px;
 }
 
-/* Empty state */
 .emptyState {
   display: flex;
   flex-direction: column;
@@ -116,7 +113,6 @@
 
 .suggestion:hover { border-color: var(--accent-border); color: var(--text); background: var(--accent-dim); }
 
-/* Messages */
 .messageWrap {
   display: flex;
   gap: 12px;
@@ -172,7 +168,6 @@
   animation: pulse 1s ease infinite;
 }
 
-/* Sources */
 .sources { border-top: 0.5px solid var(--border); padding-top: 12px; display: flex; flex-direction: column; gap: 8px; }
 .sourcesLabel { font-size: 11px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.06em; }
 .sourcesList { display: flex; flex-direction: column; gap: 6px; }
@@ -212,7 +207,6 @@
 
 .errorText { font-size: 13px; color: var(--red); }
 
-/* Input */
 .inputArea {
   border-top: 0.5px solid var(--border);
   padding: 16px 40px 20px;

@@ -4,11 +4,9 @@ async function setup() {
   try {
     console.log('Setting up database...');
 
-    // Enable pgvector extension
     await db.query(`CREATE EXTENSION IF NOT EXISTS vector`);
     console.log('pgvector extension enabled');
 
-    // Documents table
     await db.query(`
       CREATE TABLE IF NOT EXISTS documents (
         id SERIAL PRIMARY KEY,
@@ -21,8 +19,6 @@ async function setup() {
     `);
     console.log('documents table ready');
 
-    // Chunks table with vector column
-    // text-embedding-3-small produces 1536-dimensional vectors
     await db.query(`
       CREATE TABLE IF NOT EXISTS chunks (
         id SERIAL PRIMARY KEY,
@@ -35,7 +31,6 @@ async function setup() {
     `);
     console.log('chunks table ready');
 
-    // Index for fast cosine similarity search
     await db.query(`
       CREATE INDEX IF NOT EXISTS chunks_embedding_idx
       ON chunks USING ivfflat (embedding vector_cosine_ops)
