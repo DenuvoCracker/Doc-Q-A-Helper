@@ -11,7 +11,12 @@ function SourceCard({ source, index }) {
       onClick={() => setExpanded(e => !e)}
     >
       <div className={styles.sourceHeader}>
-        <span className={styles.sourceLabel}>Source {index + 1}</span>
+        <div>
+          <span className={styles.sourceLabel}>{source.label}</span>
+          <div style={{ fontSize: '0.8rem', opacity: 0.7 }}>
+            Chunk {source.chunkIndex}
+          </div>
+        </div>
         <span className={styles.sourceSim}>{source.similarity}% match</span>
         <span className={styles.sourceChevron}>{expanded ? '▴' : '▾'}</span>
       </div>

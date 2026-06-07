@@ -7,8 +7,8 @@ const router = express.Router();
 router.post('/', async (req, res) => {
   const { question, documentId } = req.body;
 
-  if (!question || !documentId) {
-    return res.status(400).json({ error: 'question and documentId are required' });
+  if (!question) {
+    return res.status(400).json({ error: 'question is required' });
   }
 
   try {
@@ -19,7 +19,10 @@ router.post('/', async (req, res) => {
     }
 
     const contextText = relevantChunks
-      .map((c, i) => `[Source ${i + 1}]:\n${c.content}`)
+      .map(
+        c =>
+          `[${c.original_name} - Chunk ${c.chunk_index}]\n${c.content}`
+      )
       .join('\n\n---\n\n');
 
     const systemPrompt = `You are a precise document assistant. Answer the user's question using ONLY the context provided below. 
@@ -32,10 +35,12 @@ ${contextText}`;
     res.setHeader('Connection', 'keep-alive');
     res.flushHeaders();
 
+    console.log(relevantChunks);
+
     res.write(`data: ${JSON.stringify({
       type: 'sources',
       sources: relevantChunks.map((c, i) => ({
-        label: `Source ${i + 1}`,
+        label: c.original_name,
         content: c.content.slice(0, 200) + (c.content.length > 200 ? '...' : ''),
         similarity: Math.round(c.similarity * 100),
         chunkIndex: c.chunk_index,
@@ -84,7 +89,6 @@ ${contextText}`;
 //       }
 //     }
 
-//     // 7. Signal completion
 //     res.write(`data: ${JSON.stringify({ type: 'done' })}\n\n`);
 //     res.end();
   } catch (err) {
