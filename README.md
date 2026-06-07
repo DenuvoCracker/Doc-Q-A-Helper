@@ -1,138 +1,288 @@
-# DocMind — AI Document Q&A
+# Doc-QA Helper
 
-Upload a PDF. Ask it anything. Get cited answers grounded in your document.
+A Retrieval-Augmented Generation (RAG) application that allows users to upload PDF documents and ask natural language questions about their contents.
 
-**Live demo:** _add your Vercel URL here_
+The application uses semantic search powered by vector embeddings and generates answers grounded only in the uploaded documents, reducing hallucinations and ensuring reliable responses.
 
 ---
 
-## What it does
+## Features
 
-1. **Upload a PDF** — the backend extracts text, splits it into overlapping chunks, and embeds each chunk using OpenAI's `text-embedding-3-small` model
-2. **Ask a question** — your question is embedded and the 5 most semantically similar chunks are retrieved using cosine similarity in PostgreSQL (pgvector)
-3. **Get a cited answer** — GPT-4o reads only those chunks and streams an answer back, citing which parts of the document it used
+* Upload PDF documents
+* Automatic PDF text extraction
+* Intelligent document chunking
+* Semantic search using vector embeddings
+* Context-aware question answering
+* Source citations for retrieved content
+* Local AI inference using Ollama
+* PostgreSQL + pgvector vector database
+* Modern React-based user interface
+* No paid APIs required
 
-## Tech stack
+---
 
-| Layer | Technology |
-|---|---|
-| Frontend | React 18, Vite, CSS Modules |
-| Backend | Node.js, Express |
-| Database | PostgreSQL + pgvector |
-| AI | OpenAI `text-embedding-3-small` + `gpt-4o` |
-| Deployment | Vercel (frontend) + Railway (backend + DB) |
+## How It Works
+
+### 1. Document Upload
+
+When a PDF is uploaded:
+
+* Text is extracted using `pdf-parse`
+* The document is split into smaller chunks
+* Each chunk is converted into a vector embedding using `nomic-embed-text`
+* Embeddings are stored in PostgreSQL using `pgvector`
+
+### 2. Question Answering
+
+When a user asks a question:
+
+* The question is embedded using the same embedding model
+* The most relevant document chunks are retrieved using vector similarity search
+* Retrieved chunks are provided as context to the language model
+* The model generates an answer based only on the retrieved context
+
+This Retrieval-Augmented Generation (RAG) approach significantly reduces hallucinations and ensures answers remain grounded in the uploaded documents.
+
+---
 
 ## Architecture
 
 ```
-User → React UI → Express API
-                      ↓
-                  pdf-parse         (extract text)
-                  chunkText()       (split into 400-word chunks with 50-word overlap)
-                  OpenAI Embeddings (convert each chunk to a 1536-dim vector)
-                  pgvector          (store + similarity search)
-                      ↓
-                  findRelevantChunks() (cosine distance query)
-                  GPT-4o (stream answer from retrieved context)
-                      ↓
-                  SSE stream → React UI (token by token)
+React Frontend
+       |
+       v
+Node.js + Express Backend
+       |
+       v
+PDF Processing (pdf-parse)
+       |
+       v
+Chunking
+       |
+       v
+nomic-embed-text (Ollama)
+       |
+       v
+PostgreSQL + pgvector
+       |
+       v
+Similarity Search
+       |
+       v
+Llama 3.2 (Ollama)
+       |
+       v
+Grounded Answer
 ```
 
-## Local setup
+---
+
+## Tech Stack
+
+### Frontend
+
+* React
+* Vite
+* CSS Modules
+
+### Backend
+
+* Node.js
+* Express.js
+
+### Database
+
+* PostgreSQL
+* pgvector
+
+### AI & Machine Learning
+
+* Ollama
+* Llama 3.2 (3B)
+* nomic-embed-text
+
+### Document Processing
+
+* pdf-parse
+* multer
+
+---
+
+## Installation
 
 ### Prerequisites
-- Node.js 18+
-- PostgreSQL 14+ with [pgvector](https://github.com/pgvector/pgvector) installed
-- OpenAI API key
 
-### 1. Clone and install
+Install:
 
-```bash
-git clone https://github.com/yourusername/doc-qa
-cd doc-qa
-npm run install:all
-```
+* Node.js
+* PostgreSQL
+* Docker Desktop
+* Ollama
 
-### 2. Configure environment
+---
+
+### Clone Repository
 
 ```bash
-cp server/.env.example server/.env
+git clone https://github.com/YOUR_USERNAME/Doc-Q-A-Helper.git
+cd Doc-Q-A-Helper
 ```
 
-Edit `server/.env`:
+---
+
+### Install Dependencies
+
+```bash
+npm install
+
+cd client
+npm install
+
+cd ../server
+npm install
 ```
-OPENAI_API_KEY=sk-your-key-here
-DATABASE_URL=postgresql://postgres:password@localhost:5432/docqa
+
+---
+
+### Start PostgreSQL + pgvector
+
+Example Docker container:
+
+```bash
+docker run -d \
+  --name docqa-pgvector \
+  -e POSTGRES_USER=postgres \
+  -e POSTGRES_PASSWORD=postgres \
+  -e POSTGRES_DB=docqa \
+  -p 5433:5432 \
+  pgvector/pgvector:pg17
+```
+
+---
+
+### Install Ollama Models
+
+```bash
+ollama pull llama3.2:3b
+ollama pull nomic-embed-text
+```
+
+Verify:
+
+```bash
+ollama list
+```
+
+---
+
+### Configure Environment
+
+Create:
+
+```env
+server/.env
+```
+
+```env
+DATABASE_URL=postgresql://postgres:postgres@localhost:5433/docqa
 PORT=3001
 ```
 
-### 3. Create the database
+---
+
+### Initialize Database
 
 ```bash
-createdb docqa          # create Postgres database
-npm run setup:db        # create tables + vector index
+npm run setup:db
 ```
 
-### 4. Run
+---
+
+### Start Application
 
 ```bash
 npm run dev
 ```
 
-- Frontend: http://localhost:5173
-- Backend: http://localhost:3001/api/health
+Frontend:
 
-## Deployment
+```
+http://localhost:5173
+```
 
-### Backend → Railway
-1. Create a new project on [Railway](https://railway.app)
-2. Add a PostgreSQL service — copy the `DATABASE_URL`
-3. Deploy this repo's `server/` folder
-4. Set env vars: `OPENAI_API_KEY`, `DATABASE_URL`, `NODE_ENV=production`, `CLIENT_URL=https://your-vercel-url.vercel.app`
-5. Run the DB setup: in Railway shell → `node db/setup.js`
+Backend:
 
-### Frontend → Vercel
-1. Import the repo on [Vercel](https://vercel.com)
-2. Set root directory to `client/`
-3. Set env var: `VITE_API_URL=https://your-railway-url.railway.app`
-4. Update `client/src/api.js` baseURL to use `import.meta.env.VITE_API_URL`
+```
+http://localhost:3001
+```
 
-## Key design decisions
+---
 
-**Why overlap in chunking?** Answers that straddle chunk boundaries would be lost without overlap. 50-word overlap ensures context isn't cut off at boundaries.
+## Example Questions
 
-**Why pgvector instead of Pinecone?** pgvector keeps the entire app in one database — simpler ops, no extra service, free on Railway. Pinecone makes sense at scale (millions of vectors), not for a portfolio project.
+* What skills does the candidate have?
+* Summarize this document.
+* What certifications are mentioned?
+* What projects are described?
+* What technologies are used?
 
-**Why `temperature: 0.2`?** Lower temperature makes the model stick closer to the provided context and hallucinate less. RAG is only as good as how faithfully the model uses the retrieved chunks.
+---
 
-**Why SSE for streaming?** Server-Sent Events are simpler than WebSockets for one-directional streaming. The browser's native `EventSource` API (or fetch + ReadableStream as used here) handles reconnection automatically.
-
-## Project structure
+## Project Structure
 
 ```
 doc-qa/
 ├── server/
 │   ├── routes/
-│   │   ├── documents.js   # upload, list, delete
-│   │   └── ask.js         # RAG pipeline + streaming
+│   │   ├── documents.js   
+│   │   └── ask.js         
 │   ├── utils/
-│   │   ├── chunker.js     # text splitting with overlap
-│   │   ├── embedder.js    # OpenAI embeddings + DB storage
-│   │   ├── retriever.js   # cosine similarity search
+│   │   ├── chunker.js     
+│   │   ├── embedder.js    
+│   │   ├── retriever.js   
 │   │   └── openaiClient.js
 │   ├── db/
-│   │   ├── index.js       # pg Pool
-│   │   └── setup.js       # table + index creation
-│   └── index.js           # Express app
+│   │   ├── index.js       
+│   │   └── setup.js       
+│   └── index.js           
 └── client/
     └── src/
         ├── pages/
-        │   ├── Home.jsx   # document library + upload
-        │   └── Chat.jsx   # streaming Q&A interface
-        ├── api.js         # axios + fetch SSE client
+        │   ├── Home.jsx   
+        │   └── Chat.jsx   
+        ├── api.js         
         └── App.jsx
 ```
 
 ---
 
-Built with React, Node.js, PostgreSQL, pgvector, and OpenAI APIs.
+## Future Improvements
+
+* Multi-document retrieval
+* Chat history persistence
+* Resume analysis mode
+* ATS scoring
+* Hybrid search (BM25 + vector search)
+* Authentication and user accounts
+* Cloud deployment support
+
+---
+
+## Learning Outcomes
+
+This project demonstrates:
+
+* Retrieval-Augmented Generation (RAG)
+* Vector Databases
+* Semantic Search
+* Embedding Models
+* Local LLM Inference
+* Full-Stack Development
+* PostgreSQL Integration
+* AI Application Development
+
+---
+
+## License
+
+This project is intended for educational purposes.
