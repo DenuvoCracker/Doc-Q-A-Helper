@@ -1,0 +1,149 @@
+.page {
+  min-height: 100vh;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 24px 80px;
+}
+
+.header {
+  padding: 64px 0 48px;
+  animation: fadeUp 0.5s ease forwards;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.logoMark {
+  color: var(--accent);
+  font-size: 20px;
+}
+
+.logoText {
+  font-family: var(--font-serif);
+  font-size: 28px;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+
+.tagline {
+  font-size: 15px;
+  color: var(--text-2);
+  font-weight: 300;
+}
+
+.main { display: flex; flex-direction: column; gap: 40px; }
+
+/* Upload zone */
+.uploadZone {
+  border: 1.5px dashed var(--border-hover);
+  border-radius: var(--radius-lg);
+  padding: 48px 32px;
+  text-align: center;
+  cursor: pointer;
+  transition: all var(--transition);
+  background: var(--bg-2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.uploadZone:hover { border-color: var(--accent-border); background: var(--accent-dim); }
+.dragging { border-color: var(--accent); background: var(--accent-dim); }
+.uploadingState { cursor: default; }
+
+.uploadIcon { color: var(--text-2); margin-bottom: 4px; }
+.uploadPrimary { font-size: 16px; color: var(--text); font-weight: 500; }
+.uploadSecondary { font-size: 13px; color: var(--text-3); }
+.hiddenInput { display: none; }
+
+.uploadProgress { width: 100%; max-width: 360px; display: flex; flex-direction: column; gap: 10px; }
+.progressLabel { font-size: 14px; color: var(--text-2); }
+.progressBar { height: 3px; background: var(--bg-4); border-radius: 2px; overflow: hidden; }
+.progressFill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.3s ease; }
+
+/* Error */
+.errorBanner {
+  background: var(--red-dim);
+  border: 0.5px solid var(--red);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  font-size: 14px;
+  color: var(--red);
+  animation: fadeIn 0.2s ease;
+}
+
+/* Library */
+.library {}
+.libraryHeading {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  color: var(--text-2);
+  font-weight: 400;
+  margin-bottom: 16px;
+}
+
+.docGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.docCard {
+  background: var(--bg-2);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  text-align: left;
+  cursor: pointer;
+  transition: all var(--transition);
+  animation: fadeUp 0.3s ease both;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.docCard:hover {
+  border-color: var(--border-hover);
+  background: var(--bg-3);
+  transform: translateY(-1px);
+}
+
+.docCardTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.docIcon { color: var(--accent); flex-shrink: 0; }
+
+.deleteBtn {
+  color: var(--text-3);
+  padding: 4px;
+  border-radius: 6px;
+  transition: all var(--transition);
+  opacity: 0;
+}
+
+.docCard:hover .deleteBtn { opacity: 1; }
+.deleteBtn:hover { color: var(--red); background: var(--red-dim); }
+
+.docName {
+  font-size: 13px;
+  color: var(--text);
+  font-weight: 500;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.docMeta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--text-3);
+  margin-top: auto;
+}
