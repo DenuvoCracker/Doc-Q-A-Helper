@@ -6,6 +6,8 @@ const router = express.Router();
 
 router.post('/', async (req, res) => {
   const { question, documentId } = req.body;
+  console.log("QUESTION:", question);
+  console.log("DOCUMENT ID:", documentId);
 
   if (!question) {
     return res.status(400).json({ error: 'question is required' });
@@ -13,6 +15,7 @@ router.post('/', async (req, res) => {
 
   try {
     const relevantChunks = await findRelevantChunks(question, documentId, 5);
+    console.log("CHUNKS FOUND:", relevantChunks.length);
 
     if (relevantChunks.length === 0) {
       return res.status(404).json({ error: 'No relevant content found in this document' });

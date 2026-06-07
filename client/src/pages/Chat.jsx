@@ -73,6 +73,7 @@ export default function Chat() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [isStreaming, setIsStreaming] = useState(false);
+  const [searchAllDocs, setSearchAllDocs] = useState(false);
 
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
@@ -122,7 +123,9 @@ export default function Chat() {
 
     await askQuestion({
       question,
-      documentId: Number(documentId),
+      documentId: searchAllDocs
+        ? null
+        : Number(documentId),
       onSources: (sources) => {
         setMessages(prev => prev.map(m =>
           m.id === assistantId ? { ...m, sources } : m
@@ -147,7 +150,7 @@ export default function Chat() {
         setIsStreaming(false);
       },
     });
-  }, [input, isStreaming, documentId]);
+  }, [input, isStreaming, documentId, searchAllDocs]);
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -196,8 +199,17 @@ export default function Chat() {
           {isEmpty ? (
             <div className={styles.emptyState}>
               <p className={styles.emptyTitle}>
-                Ask anything about<br />
-                <em>{doc?.original_name || 'this document'}</em>
+                {searchAllDocs ? (
+                  <>
+                    Ask anything across<br />
+                    <em>all uploaded documents</em>
+                  </>
+                ) : (
+                  <>
+                    Ask anything about<br />
+                    <em>{doc?.original_name || 'this document'}</em>
+                  </>
+                )}
               </p>
               <div className={styles.suggestions}>
                 {SUGGESTIONS.map((s, i) => (
@@ -223,6 +235,25 @@ export default function Chat() {
         </div>
 
         <div className={styles.inputArea}>
+          <div className={styles.searchScope}>
+            <label>
+              <input
+                type="radio"
+                checked={!searchAllDocs}
+                onChange={() => setSearchAllDocs(false)}
+              />
+              Current Document
+            </label>
+
+            <label>
+              <input
+                type="radio"
+                checked={searchAllDocs}
+                onChange={() => setSearchAllDocs(true)}
+              />
+              All Documents
+            </label>
+          </div>
           <div className={styles.inputWrap}>
             <textarea
               ref={(el) => { textareaRef.current = el; inputRef.current = el; }}

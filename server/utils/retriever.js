@@ -10,6 +10,7 @@ async function findRelevantChunks(question, documentId, k = 5) {
   const questionEmbedding = response.embedding;
   let result;
 
+  console.log("Embedding length:", questionEmbedding.length);
   if (documentId) {
     result = await db.query(
       `SELECT
@@ -26,20 +27,21 @@ async function findRelevantChunks(question, documentId, k = 5) {
       [JSON.stringify(questionEmbedding), documentId, k]
     );
   } else {
+    console.log("SEARCHING ALL DOCUMENTS");
     result = await db.query(
       `SELECT
           c.content,
           c.chunk_index,
           d.original_name,
-          1 - (c.embedding <=> $1) AS similarity
+          0.5 AS similarity
        FROM chunks c
        JOIN documents d
          ON c.document_id = d.id
-       ORDER BY c.embedding <=> $1
-       LIMIT $2`,
-      [JSON.stringify(questionEmbedding), k]
+       LIMIT 5`
     );
   }
+  console.log("Rows returned:", result.rows.length);
+  console.log(result.rows);
 
   return result.rows;
 }
