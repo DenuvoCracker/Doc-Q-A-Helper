@@ -58,8 +58,8 @@ router.post('/upload', upload.single('file'), async (req, res) => {
       [req.file.originalname, req.file.originalname, parsed.numpages]
     );
     const documentId = docResult.rows[0].id;
-
-    const chunks = chunkText(cleanedText, 400, 50);
+    
+    const chunks = chunkText(cleanedText);
 
     const chunkCount = await embedAndStore(chunks, documentId);
 

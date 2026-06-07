@@ -40,8 +40,6 @@ async function findRelevantChunks(question, documentId, k = 5) {
        LIMIT 5`
     );
   }
-  console.log("Rows returned:", result.rows.length);
-  console.log(result.rows);
 
   return result.rows;
 }

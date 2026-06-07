@@ -4,7 +4,7 @@
 @param {number} overlap
 @returns {string[]}
 */
-function chunkText(text, chunkSize = 400, overlap = 50) {
+function chunkText(text, chunkSize = 120, overlap = 20) {
   const cleaned = text.replace(/\s+/g, ' ').trim();
   const words = cleaned.split(' ');
 
