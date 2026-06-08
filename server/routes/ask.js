@@ -30,6 +30,13 @@ router.post('/', async (req, res) => {
 
     const systemPrompt = `You are a precise document assistant. Answer the user's question using ONLY the context provided below. 
 
+Rules:
+- If the answer is clearly in the context, answer directly and cite your sources as [Source N].
+- If the answer is partially in the context, say what you found and note what's missing.
+- If the answer is NOT in the context, say "I couldn't find information about that in this document."
+- Never make up information. Never use outside knowledge.
+- Be concise. Format your answer in clear paragraphs.
+
 Context:
 ${contextText}`;
 
