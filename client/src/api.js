@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const api = axios.create({
   baseURL: '/api',
-  timeout: 60000, // 60s — embedding large docs can take a while
+  timeout: 60000,
 });
 
 export async function fetchDocuments() {
@@ -26,10 +26,6 @@ export async function deleteDocument(id) {
   await api.delete(`/documents/${id}`);
 }
 
-/**
- * Streams the answer from the backend SSE endpoint.
- * Calls callbacks as events arrive.
- */
 export async function askQuestion({ question, documentId, onSources, onToken, onDone, onError }) {
   try {
     const response = await fetch('/api/ask', {
@@ -53,7 +49,7 @@ export async function askQuestion({ question, documentId, onSources, onToken, on
 
       buffer += decoder.decode(value, { stream: true });
       const lines = buffer.split('\n');
-      buffer = lines.pop(); // keep incomplete last line
+      buffer = lines.pop();
 
       for (const line of lines) {
         if (!line.startsWith('data: ')) continue;
@@ -71,4 +67,12 @@ export async function askQuestion({ question, documentId, onSources, onToken, on
   } catch (err) {
     onError(err.message);
   }
+}
+
+export async function analyzeResume(documentId) {
+  const { data } = await api.post('/analyze', {
+    documentId,
+  });
+
+  return data;
 }

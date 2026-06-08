@@ -168,6 +168,32 @@
   animation: pulse 1s ease infinite;
 }
 
+.analysisBtn {
+  width: 100%;
+  padding: 12px;
+  margin-top: 12px;
+
+  border: none;
+  border-radius: 12px;
+
+  background: #111827;
+  color: white;
+
+  cursor: pointer;
+  font-weight: 600;
+
+  transition: all 0.2s ease;
+}
+
+.analysisBtn:hover {
+  opacity: 0.9;
+}
+
+.analysisBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .sources { border-top: 0.5px solid var(--border); padding-top: 12px; display: flex; flex-direction: column; gap: 8px; }
 .sourcesLabel { font-size: 11px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.06em; }
 .sourcesList { display: flex; flex-direction: column; gap: 6px; }
