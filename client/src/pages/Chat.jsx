@@ -1,6 +1,7 @@
+import ReactMarkdown from 'react-markdown';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { askQuestion, fetchDocuments } from '../api';
+import { askQuestion, fetchDocuments, analyzeResume } from '../api';
 import styles from './Chat.module.css';
 
 function SourceCard({ source, index }) {
@@ -35,7 +36,11 @@ function MessageBubble({ message }) {
         <div className={styles.avatarMark}>✦</div>
       )}
       <div className={`${styles.bubble} ${isUser ? styles.userBubble : styles.assistantBubble}`}>
-        <p className={styles.messageText}>{message.content}</p>
+      <div className={styles.messageText}>
+        <ReactMarkdown>
+          {message.content}
+        </ReactMarkdown>
+      </div>
         {message.streaming && (
           <span className={styles.cursor} aria-hidden="true" />
         )}
@@ -100,6 +105,55 @@ export default function Chat() {
       ta.style.height = Math.min(ta.scrollHeight, 160) + 'px';
     }
   }, [input]);
+
+  const handleResumeAnalysis = async () => {
+    if (!documentId || isStreaming) return;
+  
+    setIsStreaming(true);
+  
+    const assistantId = Date.now();
+  
+    setMessages(prev => [
+      ...prev,
+      {
+        id: assistantId,
+        role: 'assistant',
+        content: 'Analyzing resume...',
+        streaming: true,
+      }
+    ]);
+  
+    try {
+      const result = await analyzeResume(Number(documentId));
+  
+      setMessages(prev =>
+        prev.map(msg =>
+          msg.id === assistantId
+            ? {
+                ...msg,
+                content: result.analysis,
+                streaming: false,
+              }
+            : msg
+        )
+      );
+    } catch (err) {
+      setMessages(prev =>
+        prev.map(msg =>
+          msg.id === assistantId
+            ? {
+                ...msg,
+                content: '',
+                error: err.message,
+                streaming: false,
+              }
+            : msg
+        )
+      );
+    }
+  
+    setIsStreaming(false);
+  };
 
   const sendMessage = useCallback(async (questionText) => {
     const question = (questionText || input).trim();
@@ -188,6 +242,10 @@ export default function Chat() {
         )}
 
         <div className={styles.sidebarDivider} />
+
+        <button className={styles.analysisBtn} onClick={handleResumeAnalysis} disabled={isStreaming}>
+          📄 Resume Insights
+        </button>
 
         <p className={styles.sidebarHint}>
           DocMind uses RAG to search your document semantically, then generates answers grounded in the text.
