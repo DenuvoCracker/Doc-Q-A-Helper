@@ -55,8 +55,14 @@ Resume:
 ${resumeText}
 `;
 
-    const response = await ollama.chat({
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    res.flushHeaders();
+
+    const stream = await ollama.chat({
       model: 'llama3.2:3b',
+      stream: true,
       messages: [
         {
           role: 'user',
@@ -65,9 +71,26 @@ ${resumeText}
       ]
     });
 
-    res.json({
-      analysis: response.message.content
-    });
+    for await (const chunk of stream) {
+      const text = chunk.message?.content || '';
+
+      if (text) {
+        res.write(
+          `data: ${JSON.stringify({
+            type: 'token',
+            text
+          })}\n\n`
+        );
+      }
+    }
+
+  res.write(
+    `data: ${JSON.stringify({
+      type: 'done'
+    })}\n\n`
+  );
+
+  res.end();
 
   } catch (err) {
     console.error(err);

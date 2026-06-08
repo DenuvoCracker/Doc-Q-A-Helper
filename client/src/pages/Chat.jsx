@@ -118,41 +118,59 @@ export default function Chat() {
       {
         id: assistantId,
         role: 'assistant',
-        content: 'Analyzing resume...',
+        content: '',
         streaming: true,
+        error: null,
       }
     ]);
   
-    try {
-      const result = await analyzeResume(Number(documentId));
+    await analyzeResume({
+      documentId: Number(documentId),
   
-      setMessages(prev =>
-        prev.map(msg =>
-          msg.id === assistantId
-            ? {
-                ...msg,
-                content: result.analysis,
-                streaming: false,
-              }
-            : msg
-        )
-      );
-    } catch (err) {
-      setMessages(prev =>
-        prev.map(msg =>
-          msg.id === assistantId
-            ? {
-                ...msg,
-                content: '',
-                error: err.message,
-                streaming: false,
-              }
-            : msg
-        )
-      );
-    }
+      onToken: (text) => {
+        setMessages(prev =>
+          prev.map(msg =>
+            msg.id === assistantId
+              ? {
+                  ...msg,
+                  content: msg.content + text,
+                }
+              : msg
+          )
+        );
+      },
   
-    setIsStreaming(false);
+      onDone: () => {
+        setMessages(prev =>
+          prev.map(msg =>
+            msg.id === assistantId
+              ? {
+                  ...msg,
+                  streaming: false,
+                }
+              : msg
+          )
+        );
+  
+        setIsStreaming(false);
+      },
+  
+      onError: (err) => {
+        setMessages(prev =>
+          prev.map(msg =>
+            msg.id === assistantId
+              ? {
+                  ...msg,
+                  streaming: false,
+                  error: err,
+                }
+              : msg
+          )
+        );
+  
+        setIsStreaming(false);
+      },
+    });
   };
 
   const sendMessage = useCallback(async (questionText) => {

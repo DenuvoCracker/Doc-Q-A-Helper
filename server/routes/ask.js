@@ -60,47 +60,36 @@ ${contextText}`;
     console.log("Context length:", contextText.length);
     console.log("Question:", question);
 
-    const response = await ollama.chat({
+    const stream = await ollama.chat({
       model: 'llama3.2:3b',
+      stream: true,
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: question },
       ],
     });
     
-    res.write(`data: ${JSON.stringify({
-      type: 'token',
-      text: response.message.content
-    })}\n\n`);
+    for await (const chunk of stream) {
+      const text = chunk.message?.content || '';
     
-    res.write(`data: ${JSON.stringify({
-      type: 'done'
-    })}\n\n`);
+      if (text) {
+        res.write(
+          `data: ${JSON.stringify({
+            type: 'token',
+            text
+          })}\n\n`
+        );
+      }
+    }
+    
+    res.write(
+      `data: ${JSON.stringify({
+        type: 'done'
+      })}\n\n`
+    );
     
     res.end();
 
-    // for await (const chunk of stream) {
-    //   const text = chunk.choices[0]?.delta?.content || '';
-    //   if (text) {
-    //     res.write(`data: ${JSON.stringify({ type: 'token', text })}\n\n`);
-    //   }
-    // }
-
-//     for await (const chunk of stream) {
-//       const text = chunk.message?.content || '';
-    
-//       if (text) {
-//         res.write(
-//           `data: ${JSON.stringify({
-//             type: 'token',
-//             text
-//           })}\n\n`
-//         );
-//       }
-//     }
-
-//     res.write(`data: ${JSON.stringify({ type: 'done' })}\n\n`);
-//     res.end();
   } catch (err) {
     console.error('Ask error:', err);
     if (res.headersSent) {
