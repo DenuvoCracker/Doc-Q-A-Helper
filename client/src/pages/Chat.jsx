@@ -36,6 +36,24 @@ function MessageBubble({ message }) {
         <div className={styles.avatarMark}>✦</div>
       )}
       <div className={`${styles.bubble} ${isUser ? styles.userBubble : styles.assistantBubble}`}>
+      {message.score !== null && (
+        <div className={styles.scoreCard}>
+          <div className={styles.scoreLabel}>
+            ATS MATCH SCORE
+          </div>
+
+          <div className={styles.scoreValue}>
+            {message.score}%
+          </div>
+
+          <div className={styles.scoreBar}>
+            <div
+              className={styles.scoreFill}
+              style={{width: `${message.score}%`}}
+            />
+          </div>
+        </div>
+      )}
       <div className={styles.messageText}>
         <ReactMarkdown>
           {message.content}
@@ -212,14 +230,21 @@ export default function Chat() {
   
       onDone: () => {
         setMessages(prev =>
-          prev.map(msg =>
-            msg.id === assistantId
-              ? {
-                  ...msg,
-                  streaming: false,
-                }
-              : msg
-          )
+          prev.map(msg => {
+            if (msg.id !== assistantId) return msg;
+        
+            const scoreMatch =
+              msg.content.match(/Match Score.*?(\d+)/is) ||
+              msg.content.match(/(\d+)%/);
+        
+            return {
+              ...msg,
+              score: scoreMatch
+                ? Number(scoreMatch[1])
+                : null,
+              streaming: false,
+            };
+          })
         );
   
         setIsStreaming(false);

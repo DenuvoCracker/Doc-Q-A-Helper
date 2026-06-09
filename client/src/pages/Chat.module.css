@@ -276,6 +276,62 @@
     0 0 40px rgba(124,58,237,0.25);
 }
 
+.scoreCard {
+  margin-bottom: 16px;
+
+  padding: 16px;
+
+  border-radius: 16px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(99,102,241,0.15),
+      rgba(168,85,247,0.15)
+    );
+
+  border:
+    1px solid rgba(99,102,241,0.25);
+}
+
+.scoreLabel {
+  font-size: 12px;
+  letter-spacing: 1px;
+  opacity: 0.7;
+}
+
+.scoreValue {
+  margin-top: 8px;
+
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.scoreBar {
+  margin-top: 12px;
+
+  height: 10px;
+
+  border-radius: 999px;
+
+  overflow: hidden;
+
+  background: rgba(255,255,255,0.08);
+}
+
+.scoreFill {
+  height: 100%;
+
+  border-radius: 999px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #4f46e5,
+      #8b5cf6
+    );
+}
+
 .jobMatchBtn {
   width: 100%;
 
