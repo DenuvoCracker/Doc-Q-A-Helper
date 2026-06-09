@@ -1,14 +1,20 @@
 const db = require('../db');
-const { ollama } = require('./openaiClient');
+const { ai } = require('./openaiClient');
 
 async function findRelevantChunks(question, documentId, k = 5) {
-  const response = await ollama.embeddings({
-    model: 'nomic-embed-text',
-    prompt: question,
+  const response = await ai.models.embedContent({
+    model: 'gemini-embedding-001',
+    contents: question,
   });
+  
+  const questionEmbedding =
+    response.embeddings[0].values;
 
-  const questionEmbedding = response.embedding;
-  let result;
+  console.log(
+    "Question embedding size:",
+    questionEmbedding.length
+  );
+    let result;
 
   console.log("Embedding length:", questionEmbedding.length);
   if (documentId) {

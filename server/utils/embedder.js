@@ -1,5 +1,5 @@
 const db = require('../db');
-const { ollama } = require('./openaiClient');
+const { ai } = require('./openaiClient');
 
 const MAX_CHUNKS = 200;
 
@@ -9,10 +9,18 @@ async function embedAndStore(chunks, documentId) {
   for (let i = 0; i < limited.length; i++) {
     const content = limited[i].replace(/\0/g, '');
   
-    const response = await ollama.embeddings({
-      model: 'nomic-embed-text',
-      prompt: content,
+    const response = await ai.models.embedContent({
+      model: 'gemini-embedding-001',
+      contents: content,
     });
+    
+    const embedding =
+      response.embeddings[0].values;
+
+    console.log(
+      "Embedding size:",
+      embedding.length
+    );
   
     await db.query(
       `INSERT INTO chunks

@@ -25,17 +25,17 @@ async function setup() {
         document_id INTEGER REFERENCES documents(id) ON DELETE CASCADE,
         content TEXT NOT NULL,
         chunk_index INTEGER NOT NULL,
-        embedding vector(768),
+        embedding vector(3072),
         created_at TIMESTAMPTZ DEFAULT NOW()
       )
     `);
     console.log('chunks table ready');
 
-    await db.query(`
-      CREATE INDEX IF NOT EXISTS chunks_embedding_idx
-      ON chunks USING ivfflat (embedding vector_cosine_ops)
-      WITH (lists = 100)
-    `);
+    // await db.query(`
+    //   CREATE INDEX IF NOT EXISTS chunks_embedding_idx
+    //   ON chunks USING ivfflat (embedding vector_cosine_ops)
+    //   WITH (lists = 100)
+    // `);
     console.log('vector index created');
 
     console.log('\nDatabase setup complete!');
