@@ -1,6 +1,6 @@
 const express = require('express');
 const { findRelevantChunks } = require('../utils/retriever');
-const { ollama } = require('../utils/openaiClient');
+const { genAI } = require('../utils/openaiClient');
 
 const router = express.Router();
 
@@ -60,23 +60,27 @@ ${contextText}`;
     console.log("Context length:", contextText.length);
     console.log("Question:", question);
 
-    const stream = await ollama.chat({
-      model: 'llama3.2:3b',
-      stream: true,
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: question },
-      ],
+    const model = genAI.getGenerativeModel({
+      model: 'gemini-2.5-flash',
     });
     
-    for await (const chunk of stream) {
-      const text = chunk.message?.content || '';
+    const prompt = `
+    ${systemPrompt}
+    
+    User Question:
+    ${question}
+    `;
+    
+    const result = await model.generateContentStream(prompt);
+    
+    for await (const chunk of result.stream) {
+      const text = chunk.text();
     
       if (text) {
         res.write(
           `data: ${JSON.stringify({
             type: 'token',
-            text
+            text,
           })}\n\n`
         );
       }

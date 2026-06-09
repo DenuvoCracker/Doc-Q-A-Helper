@@ -36,7 +36,7 @@ function MessageBubble({ message }) {
         <div className={styles.avatarMark}>✦</div>
       )}
       <div className={`${styles.bubble} ${isUser ? styles.userBubble : styles.assistantBubble}`}>
-      {message.score !== null && (
+      {typeof message.score === 'number' && (
         <div className={styles.scoreCard}>
           <div className={styles.scoreLabel}>
             ATS MATCH SCORE
@@ -189,16 +189,26 @@ export default function Chat() {
   
       onDone: () => {
         setMessages(prev =>
-          prev.map(msg =>
-            msg.id === assistantId
-              ? {
-                  ...msg,
-                  streaming: false,
-                }
-              : msg
-          )
+          prev.map(msg => {
+            if (msg.id !== assistantId) return msg;
+      
+            const scoreMatch =
+              msg.content.match(
+                /(\d{1,3})\/100/
+              );
+      
+            console.log("ATS SCORE:", scoreMatch?.[1]);
+      
+            return {
+              ...msg,
+              score: scoreMatch
+                ? Number(scoreMatch[1])
+                : null,
+              streaming: false,
+            };
+          })
         );
-  
+      
         setIsStreaming(false);
       },
   
@@ -262,17 +272,17 @@ export default function Chat() {
         
             const scoreMatch =
               msg.content.match(
-                /Match Score:[\s\S]*?(\d+)/i
+                /Match Score[\s\S]*?(\d{1,3})/i
               );
         
             const matchingMatch =
               msg.content.match(
-                /Matching Skills\s*([\s\S]*?)Missing Skills/i
+                /Matching Skills[\s\S]*?\n([\s\S]*?)# Missing Skills/i
               );
             
             const missingMatch =
               msg.content.match(
-                /Missing Skills\s*([\s\S]*?)Resume Strengths For This Role/i
+                /Missing Skills[\s\S]*?\n([\s\S]*?)# Resume Strengths For This Role/i
               );
 
             const matchingSkills =
@@ -307,6 +317,7 @@ export default function Chat() {
             console.log("SCORE:", scoreMatch?.[1]);
             console.log("MATCHING:", matchingSkills);
             console.log("MISSING:", missingSkills);
+            console.log("FINAL CONTENT:", msg.content);
 
             return {
               ...msg,
