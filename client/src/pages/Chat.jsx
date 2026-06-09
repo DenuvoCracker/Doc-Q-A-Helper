@@ -1,7 +1,7 @@
 import ReactMarkdown from 'react-markdown';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { askQuestion, fetchDocuments, analyzeResume } from '../api';
+import { askQuestion, fetchDocuments, analyzeResume, jobMatch } from '../api';
 import styles from './Chat.module.css';
 
 function SourceCard({ source, index }) {
@@ -79,6 +79,8 @@ export default function Chat() {
   const [input, setInput] = useState('');
   const [isStreaming, setIsStreaming] = useState(false);
   const [searchAllDocs, setSearchAllDocs] = useState(false);
+  const [showJobMatch, setShowJobMatch] = useState(false);
+  const [jobDescription, setJobDescription] = useState('');
 
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
@@ -126,6 +128,74 @@ export default function Chat() {
   
     await analyzeResume({
       documentId: Number(documentId),
+  
+      onToken: (text) => {
+        setMessages(prev =>
+          prev.map(msg =>
+            msg.id === assistantId
+              ? {
+                  ...msg,
+                  content: msg.content + text,
+                }
+              : msg
+          )
+        );
+      },
+  
+      onDone: () => {
+        setMessages(prev =>
+          prev.map(msg =>
+            msg.id === assistantId
+              ? {
+                  ...msg,
+                  streaming: false,
+                }
+              : msg
+          )
+        );
+  
+        setIsStreaming(false);
+      },
+  
+      onError: (err) => {
+        setMessages(prev =>
+          prev.map(msg =>
+            msg.id === assistantId
+              ? {
+                  ...msg,
+                  streaming: false,
+                  error: err,
+                }
+              : msg
+          )
+        );
+  
+        setIsStreaming(false);
+      },
+    });
+  };
+
+  const handleJobMatch = async () => {
+    if (!documentId || !jobDescription.trim() || isStreaming) return;
+  
+    setIsStreaming(true);
+  
+    const assistantId = Date.now();
+  
+    setMessages(prev => [
+      ...prev,
+      {
+        id: assistantId,
+        role: 'assistant',
+        content: '',
+        streaming: true,
+        error: null,
+      }
+    ]);
+  
+    await jobMatch({
+      documentId: Number(documentId),
+      jobDescription,
   
       onToken: (text) => {
         setMessages(prev =>
@@ -264,6 +334,26 @@ export default function Chat() {
         <button className={styles.analysisBtn} onClick={handleResumeAnalysis} disabled={isStreaming}>
           📄 Resume Insights
         </button>
+
+        <button className={`${styles.featureBtn} ${showJobMatch ? styles.featureBtnActive : ''}`} onClick={() => setShowJobMatch(prev => !prev)}>
+          💼 Job Match
+        </button>
+        {showJobMatch && (
+          <div className={styles.jobMatchBox}>
+            <textarea
+              className={styles.jobTextarea}
+              value={jobDescription}
+              onChange={(e) => setJobDescription(e.target.value)}
+              placeholder="Paste job description here..."
+            />
+            <button
+              className={styles.jobMatchBtn}
+              onClick={handleJobMatch}
+            >
+              Analyze Match
+            </button>
+          </div>
+        )}
 
         <p className={styles.sidebarHint}>
           DocMind uses RAG to search your document semantically, then generates answers grounded in the text.

@@ -194,6 +194,110 @@
   cursor: not-allowed;
 }
 
+.activeJobMatch {
+  background: linear-gradient(
+    135deg,
+    rgba(99, 102, 241, 0.25),
+    rgba(168, 85, 247, 0.25)
+  );
+
+  border: 1px solid rgba(168, 85, 247, 0.4);
+
+  box-shadow:
+    0 0 20px rgba(168, 85, 247, 0.25),
+    0 0 40px rgba(99, 102, 241, 0.15);
+
+  transform: translateY(-1px);
+}
+
+.jobMatchBox {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.jobTextarea {
+  width: 100%;
+  min-height: 140px;
+  resize: vertical;
+
+  padding: 12px;
+
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.08);
+
+  background: rgba(255,255,255,0.03);
+  color: white;
+
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.jobTextarea:focus {
+  outline: none;
+  border-color: #4f46e5;
+}
+
+.featureBtn {
+  width: 100%;
+  padding: 16px;
+
+  border: none;
+  border-radius: 18px;
+
+  background: rgba(255,255,255,0.04);
+
+  color: white;
+  font-weight: 600;
+  font-size: 15px;
+
+  cursor: pointer;
+
+  transition: all 0.25s ease;
+}
+
+.featureBtn:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 10px 25px rgba(99,102,241,0.15);
+}
+
+.featureBtnActive {
+  background: linear-gradient(
+    135deg,
+    #4f46e5,
+    #7c3aed
+  );
+
+  box-shadow:
+    0 0 20px rgba(99,102,241,0.35),
+    0 0 40px rgba(124,58,237,0.25);
+}
+
+.jobMatchBtn {
+  width: 100%;
+
+  padding: 12px;
+
+  border: none;
+  border-radius: 12px;
+
+  cursor: pointer;
+
+  background: #4f46e5;
+  color: white;
+
+  font-weight: 600;
+
+  transition: 0.2s;
+}
+
+.jobMatchBtn:hover {
+  opacity: 0.9;
+}
+
 .sources { border-top: 0.5px solid var(--border); padding-top: 12px; display: flex; flex-direction: column; gap: 8px; }
 .sourcesLabel { font-size: 11px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.06em; }
 .sourcesList { display: flex; flex-direction: column; gap: 6px; }
