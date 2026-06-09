@@ -36,7 +36,7 @@ function MessageBubble({ message }) {
         <div className={styles.avatarMark}>✦</div>
       )}
       <div className={`${styles.bubble} ${isUser ? styles.userBubble : styles.assistantBubble}`}>
-      {message.score !== null && (
+      {typeof message.score === 'number' && (
         <div className={styles.scoreCard}>
           <div className={styles.scoreLabel}>
             ATS MATCH SCORE
