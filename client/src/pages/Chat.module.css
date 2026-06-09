@@ -332,6 +332,42 @@
     );
 }
 
+.skillTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  margin: 12px 0 20px;
+}
+
+.matchTag {
+  padding: 6px 12px;
+
+  border-radius: 999px;
+
+  background:
+    rgba(34,197,94,0.15);
+
+  color: #22c55e;
+
+  border:
+    1px solid rgba(34,197,94,0.25);
+}
+
+.missingTag {
+  padding: 6px 12px;
+
+  border-radius: 999px;
+
+  background:
+    rgba(239,68,68,0.15);
+
+  color: #ef4444;
+
+  border:
+    1px solid rgba(239,68,68,0.25);
+}
+
 .jobMatchBtn {
   width: 100%;
 

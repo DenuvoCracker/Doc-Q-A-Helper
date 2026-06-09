@@ -54,6 +54,33 @@ function MessageBubble({ message }) {
           </div>
         </div>
       )}
+      {message.matchingSkills?.length > 0 && (
+        <>
+          <h4>Matching Skills</h4>
+
+          <div className={styles.skillTags}>
+            {message.matchingSkills.map(skill => (
+              <span key={skill} className={styles.matchTag}>
+                {skill}
+              </span>
+            ))}
+          </div>
+        </>
+      )}
+
+      {message.missingSkills?.length > 0 && (
+        <>
+          <h4>Missing Skills</h4>
+
+          <div className={styles.skillTags}>
+            {message.missingSkills.map(skill => (
+              <span key={skill} className={styles.missingTag}>
+                {skill}
+              </span>
+            ))}
+          </div>
+        </>
+      )}
       <div className={styles.messageText}>
         <ReactMarkdown>
           {message.content}
@@ -234,19 +261,69 @@ export default function Chat() {
             if (msg.id !== assistantId) return msg;
         
             const scoreMatch =
-              msg.content.match(/Match Score.*?(\d+)/is) ||
-              msg.content.match(/(\d+)%/);
+              msg.content.match(
+                /Match Score:[\s\S]*?(\d+)/i
+              );
         
+            const matchingMatch =
+              msg.content.match(
+                /Matching Skills\s*([\s\S]*?)Missing Skills/i
+              );
+            
+            const missingMatch =
+              msg.content.match(
+                /Missing Skills\s*([\s\S]*?)Resume Strengths For This Role/i
+              );
+
+            const matchingSkills =
+              matchingMatch?.[1]
+                ?.replace(/\n/g, ' ')
+                .replace(/\*/g, '')
+                .replace(/#/g, '')
+                .split(',')
+                .map(s => s.trim().replace(/^:/, ''))
+                .filter(skill => skill && skill.toLowerCase() !== 'none' && skill.length < 40) || [];
+            
+            const missingSkills =
+              missingMatch?.[1]
+                ?.replace(/\n/g, ' ')
+                .replace(/\*/g, '')
+                .replace(/#/g, '')
+                .split(',')
+                .map(s => s.trim().replace(/^:/, ''))
+                .filter(skill => skill && skill.toLowerCase() !== 'none' && skill.length < 40) || [];
+
+              const cleanedContent = msg.content
+                .replace(/Match Score[\s\S]*?Resume Strengths For This Role/i,
+                         'Resume Strengths For This Role')
+                .trim();
+            
+              console.log("RAW CONTENT:");
+              console.log(msg.content);
+              
+              console.log("MATCHING MATCH:", matchingMatch);
+              console.log("MISSING MATCH:", missingMatch);  
+
+            console.log("SCORE:", scoreMatch?.[1]);
+            console.log("MATCHING:", matchingSkills);
+            console.log("MISSING:", missingSkills);
+
             return {
               ...msg,
+
               score: scoreMatch
                 ? Number(scoreMatch[1])
                 : null,
+              
+              matchingSkills,
+              missingSkills,
+              content: cleanedContent,
+              
               streaming: false,
             };
           })
         );
-  
+
         setIsStreaming(false);
       },
   

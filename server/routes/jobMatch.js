@@ -43,17 +43,49 @@ Provide:
 
 # Matching Skills
 
+Return as a comma-separated list.
+Return ONLY skill names.
+
+Example:
+React, JavaScript, SQL
+
+Do NOT include explanations.
+Do NOT include bullet points.
+Do NOT include parentheses.
+Do NOT include any text other that the skill names.
+
 # Missing Skills
+
+Return as a comma-separated list.
+Return ONLY skill names.
+
+Example:
+Docker, AWS, Git
+
+Do NOT include explanations.
+Do NOT include bullet points.
+Do NOT include parentheses.
+Do NOT include any text other that the skill names.
 
 # Resume Strengths For This Role
 
 # Weaknesses For This Role
 
 # Recommended Projects
+(Always provide at least 2 project ideas.)
 
 # Recommended Certifications
+(Always provide at least 2 certifications.)
 
 # Action Plan
+(Atlest provide a 3-step action plan.)
+
+Never write:
+"None mentioned"
+"No strengths mentioned"
+"No weaknesses mentioned"
+
+If information is limited, make a reasonable recommendation based on the resume and job description.
 
 Return clean markdown.
 
