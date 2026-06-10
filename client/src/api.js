@@ -28,7 +28,7 @@ export async function deleteDocument(id) {
 
 export async function askQuestion({ question, documentId, onSources, onToken, onDone, onError }) {
   try {
-    const response = await fetch('/api/ask', {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/ask`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ question, documentId }),
@@ -76,7 +76,7 @@ export async function analyzeResume({
   onError,
 }) {
   try {
-    const response = await fetch('/api/analyze', {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/analyze`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -142,7 +142,7 @@ export async function jobMatch({
   onError,
 }) {
   try {
-    const response = await fetch('/api/job-match', {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/job-match`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
